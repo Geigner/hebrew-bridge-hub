@@ -11,7 +11,7 @@
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
             --text-color: #1e293b;
-            --text-muted: #57606a; /* Updated for strict WCAG AA contrast compliance */
+            --text-muted: #57606a;
         }
         body {
             font-family: system-ui, -apple-system, sans-serif;
@@ -58,79 +58,45 @@
         .lang-card {
             background: var(--card-bg);
             border-radius: 14px;
-            padding: 20px;
+            padding: 22px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
             border: 1px solid #e2e8f0;
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
         }
         .lang-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
-            border-color: #cbd5e1;
-        }
-        .lang-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            border-color: var(--accent-color);
         }
         .lang-flag {
-            font-size: 2rem;
+            font-size: 2.2rem;
             background: #f1f5f9;
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+        .lang-title-area {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
         .lang-title-area h2 {
             margin: 0;
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             color: var(--primary-color);
         }
         .lang-title-area span {
             font-size: 0.85rem;
-            color: var(--text-muted); /* High contrast secondary text */
-        }
-        .lang-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 4px;
-        }
-        .btn {
-            flex: 1;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            text-align: center;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-            transition: background 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .btn-primary {
-            background-color: var(--accent-color);
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #1d4ed8;
-        }
-        .btn-outline {
-            background-color: #f1f5f9;
-            color: var(--primary-color);
-            border: 1px solid #cbd5e1;
-        }
-        .coming-soon {
-            opacity: 0.6;
-            border-style: dashed;
+            color: var(--text-muted);
         }
         .site-footer {
             text-align: center;
@@ -156,88 +122,58 @@
         <div class="languages-grid">
             
             <!-- צרפתית -->
-            <div class="lang-card">
-                <div class="lang-header">
-                    <div class="lang-flag" aria-hidden="true">🇫🇷</div>
-                    <div class="lang-title-area">
-                        <h2>עברית ⇄ צרפתית[cite: 1]</h2>
-                        <span>Hebrew ⇄ Français[cite: 1]</span>
-                    </div>
+            <a href="https://geigner.github.io/hebrew-french/" target="_blank" class="lang-card">
+                <div class="lang-flag" aria-hidden="true">🇫🇷</div>
+                <div class="lang-title-area">
+                    <h2>עברית ⇄ צרפתית</h2>
+                    <span>כניסה למרחב התרגום והשיחה</span>
                 </div>
-                <div class="lang-actions">
-                    <a href="https://geigner.github.io/hebrew-french/" target="_blank" class="btn btn-primary">פתח מערכת 🚀[cite: 1]</a>
-                </div>
-            </div>
+            </a>
 
             <!-- אמהרית -->
-            <div class="lang-card">
-                <div class="lang-header">
-                    <div class="lang-flag" aria-hidden="true">🇪🇹</div>
-                    <div class="lang-title-area">
-                        <h2>עברית ⇄ אמהרית[cite: 1]</h2>
-                        <span>Hebrew ⇄ አማርኛ[cite: 1]</span>
-                    </div>
+            <a href="https://geigner.github.io/hebrew-amharic-temp-room/" target="_blank" class="lang-card">
+                <div class="lang-flag" aria-hidden="true">🇪🇹</div>
+                <div class="lang-title-area">
+                    <h2>עברית ⇄ אמהרית</h2>
+                    <span>כניסה למרחב התרגום והשיחה</span>
                 </div>
-                <div class="lang-actions">
-                    <a href="https://geigner.github.io/hebrew-amharic-temp-room/" target="_blank" class="btn btn-primary">פתח מערכת 🚀[cite: 1]</a>
-                </div>
-            </div>
+            </a>
 
             <!-- רוסית -->
-            <div class="lang-card">
-                <div class="lang-header">
-                    <div class="lang-flag" aria-hidden="true">🇷🇺</div>
-                    <div class="lang-title-area">
-                        <h2>עברית ⇄ רוסית[cite: 1]</h2>
-                        <span>Hebrew ⇄ Русский[cite: 1]</span>
-                    </div>
+            <a href="https://geigner.github.io/hebrew-russian/" target="_blank" class="lang-card">
+                <div class="lang-flag" aria-hidden="true">🇷🇺</div>
+                <div class="lang-title-area">
+                    <h2>עברית ⇄ רוסית</h2>
+                    <span>כניסה למרחב התרגום והשיחה</span>
                 </div>
-                <div class="lang-actions">
-                    <a href="https://geigner.github.io/hebrew-russian/" target="_blank" class="btn btn-primary">פתח מערכת 🚀[cite: 1]</a>
-                </div>
-            </div>
+            </a>
 
             <!-- אנגלית -->
-            <div class="lang-card">
-                <div class="lang-header">
-                    <div class="lang-flag" aria-hidden="true">🇬🇧</div>
-                    <div class="lang-title-area">
-                        <h2>עברית ⇄ אנגלית[cite: 1]</h2>
-                        <span>Hebrew ⇄ English[cite: 1]</span>
-                    </div>
+            <a href="https://geigner.github.io/hebrew-english/" target="_blank" class="lang-card">
+                <div class="lang-flag" aria-hidden="true">🇬🇧</div>
+                <div class="lang-title-area">
+                    <h2>עברית ⇄ אנגלית</h2>
+                    <span>כניסה למרחב התרגום והשיחה</span>
                 </div>
-                <div class="lang-actions">
-                    <a href="https://geigner.github.io/hebrew-english/" target="_blank" class="btn btn-primary">פתח מערכת 🚀[cite: 1]</a>
-                </div>
-            </div>
+            </a>
 
             <!-- ערבית -->
-            <div class="lang-card">
-                <div class="lang-header">
-                    <div class="lang-flag" aria-hidden="true">🇸🇦</div>
-                    <div class="lang-title-area">
-                        <h2>עברית ⇄ ערבית</h2>
-                        <span>Hebrew ⇄ العربية</span>
-                    </div>
+            <a href="https://geigner.github.io/hebrew-arabic/" target="_blank" class="lang-card">
+                <div class="lang-flag" aria-hidden="true">🇸🇦</div>
+                <div class="lang-title-area">
+                    <h2>עברית ⇄ ערבית</h2>
+                    <span>כניסה למרחב התרגום והשיחה</span>
                 </div>
-                <div class="lang-actions">
-                    <a href="https://geigner.github.io/hebrew-arabic/" target="_blank" class="btn btn-primary">פתח מערכת 🚀</a>
-                </div>
-            </div>
+            </a>
 
-            <!-- איטלקית (עתידי) -->
-            <div class="lang-card coming-soon">
-                <div class="lang-header">
-                    <div class="lang-flag" aria-hidden="true">🇮🇹</div>
-                    <div class="lang-title-area">
-                        <h2>עברית ⇄ איטלקית[cite: 1]</h2>
-                        <span>Hebrew ⇄ Italiano (בקרוב)[cite: 1]</span>
-                    </div>
+            <!-- איטלקית -->
+            <a href="https://geigner.github.io/hebrew-italian/" target="_blank" class="lang-card">
+                <div class="lang-flag" aria-hidden="true">🇮🇹</div>
+                <div class="lang-title-area">
+                    <h2>עברית ⇄ איטלקית</h2>
+                    <span>כניסה למרחב התרגום והשיחה</span>
                 </div>
-                <div class="lang-actions">
-                    <button class="btn btn-outline" disabled>בפיתוח...[cite: 1]</button>
-                </div>
-            </div>
+            </a>
 
         </div>
 
