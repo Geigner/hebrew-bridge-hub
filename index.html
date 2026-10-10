@@ -2,8 +2,9 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>פורטל גשר שפות - היחידה לקידום נוער נוף הגליל</title>
+    <!-- Viewport fix: Remove zoom restrictions for accessibility -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פורטל גשר שפות פדגוגי</title>
     <style>
         :root {
             --primary-color: #0f172a;
@@ -11,7 +12,7 @@
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
             --text-color: #1e293b;
-            --text-muted: #64748b;
+            --text-muted: #475569; /* Updated for better contrast */
         }
         body {
             font-family: system-ui, -apple-system, sans-serif;
@@ -86,14 +87,14 @@
             justify-content: center;
             border-radius: 10px;
         }
-        .lang-title-area h3 {
+        .lang-title-area h2 {
             margin: 0;
             font-size: 1.15rem;
             color: var(--primary-color);
         }
         .lang-title-area span {
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            font-size: 0.85rem;
+            color: var(--text-muted); /* Accessible contrast color */
         }
         .lang-actions {
             display: flex;
@@ -128,9 +129,6 @@
             color: var(--primary-color);
             border: 1px solid #cbd5e1;
         }
-        .btn-outline:hover {
-            background-color: #e2e8f0;
-        }
         .coming-soon {
             opacity: 0.6;
             border-style: dashed;
@@ -150,7 +148,7 @@
 </head>
 <body>
 
-    <div class="container">
+    <main class="container">
         <header class="hub-header">
             <h1>🌐 פורטל גשר שפות פדגוגי</h1>
             <p>מרכז ניהול וגישה לחדרי השיחה הרב-לשוניים</p>
@@ -161,9 +159,9 @@
             <!-- צרפתית -->
             <div class="lang-card">
                 <div class="lang-header">
-                    <div class="lang-flag">🇫🇷</div>
+                    <div class="lang-flag" aria-hidden="true">🇫🇷</div>
                     <div class="lang-title-area">
-                        <h3>עברית ⇄ צרפתית</h3>
+                        <h2>עברית ⇄ צרפתית</h2>
                         <span>Hebrew ⇄ Français</span>
                     </div>
                 </div>
@@ -175,9 +173,9 @@
             <!-- אמהרית -->
             <div class="lang-card">
                 <div class="lang-header">
-                    <div class="lang-flag">🇪🇹</div>
+                    <div class="lang-flag" aria-hidden="true">🇪🇹</div>
                     <div class="lang-title-area">
-                        <h3>עברית ⇄ אמהרית</h3>
+                        <h2>עברית ⇄ אמהרית</h2>
                         <span>Hebrew ⇄ አማርኛ</span>
                     </div>
                 </div>
@@ -189,9 +187,9 @@
             <!-- רוסית -->
             <div class="lang-card">
                 <div class="lang-header">
-                    <div class="lang-flag">🇷🇺</div>
+                    <div class="lang-flag" aria-hidden="true">🇷🇺</div>
                     <div class="lang-title-area">
-                        <h3>עברית ⇄ רוסית</h3>
+                        <h2>עברית ⇄ רוסית</h2>
                         <span>Hebrew ⇄ Русский</span>
                     </div>
                 </div>
@@ -203,9 +201,9 @@
             <!-- אנגלית -->
             <div class="lang-card">
                 <div class="lang-header">
-                    <div class="lang-flag">🇬🇧</div>
+                    <div class="lang-flag" aria-hidden="true">🇬🇧</div>
                     <div class="lang-title-area">
-                        <h3>עברית ⇄ אנגלית</h3>
+                        <h2>עברית ⇄ אנגלית</h2>
                         <span>Hebrew ⇄ English</span>
                     </div>
                 </div>
@@ -217,9 +215,9 @@
             <!-- ערבית (עתידי) -->
             <div class="lang-card coming-soon">
                 <div class="lang-header">
-                    <div class="lang-flag">🇸🇦</div>
+                    <div class="lang-flag" aria-hidden="true">🇸🇦</div>
                     <div class="lang-title-area">
-                        <h3>עברית ⇄ ערבית</h3>
+                        <h2>עברית ⇄ ערבית</h2>
                         <span>Hebrew ⇄ العربية (בקרוב)</span>
                     </div>
                 </div>
@@ -231,9 +229,9 @@
             <!-- איטלקית (עתידי) -->
             <div class="lang-card coming-soon">
                 <div class="lang-header">
-                    <div class="lang-flag">🇮🇹</div>
+                    <div class="lang-flag" aria-hidden="true">🇮🇹</div>
                     <div class="lang-title-area">
-                        <h3>עברית ⇄ איטלקית</h3>
+                        <h2>עברית ⇄ איטלקית</h2>
                         <span>Hebrew ⇄ Italiano (בקרוב)</span>
                     </div>
                 </div>
@@ -248,7 +246,7 @@
             היחידה לקידום נוער נוף הגליל | תוכנית היל"ה<br>
             תכנון וניהול פדגוגי: אייגנר גיא
         </footer>
-    </div>
+    </main>
 
 </body>
 </html>
