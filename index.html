@@ -116,7 +116,7 @@
             background: #e2e8f0;
         }
 
-        /* פילטרים מהירים */
+        /* פילטרים דינמיים מהירים */
         .filter-bar {
             display: flex;
             gap: 6px;
@@ -128,7 +128,7 @@
         .filter-chip {
             background: #f1f5f9;
             border: none;
-            padding: 5px 10px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
             cursor: pointer;
@@ -251,15 +251,9 @@
                 </div>
             </div>
 
-            <!-- סרגל סינון מהיר לפי שפות -->
+            <!-- סרגל סינון דינמי (מתעדכן רק לפי שפות שיש בהן חדרים פתוחים) -->
             <div class="filter-bar" id="filter-bar">
                 <button class="filter-chip active" onclick="filterRooms('all', this)">הכל</button>
-                <button class="filter-chip" onclick="filterRooms('hebrew-amharic-71f5d', this)">אמהרית</button>
-                <button class="filter-chip" onclick="filterRooms('hebrew-arabic', this)">ערבית</button>
-                <button class="filter-chip" onclick="filterRooms('hebrew-italian', this)">איטלקית</button>
-                <button class="filter-chip" onclick="filterRooms('hebrew-russian', this)">רוסית</button>
-                <button class="filter-chip" onclick="filterRooms('hebrew-french', this)">צרפתית</button>
-                <button class="filter-chip" onclick="filterRooms('hebrew-english', this)">אנגלית</button>
             </div>
 
             <div style="overflow-x: auto;">
@@ -345,7 +339,7 @@
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const configs = [
-            { id: "hebrew-amharic-71f5d", name: "עברית ⇄ אמהרית", flag: "🇪🇹", url: "https://geigner.github.io/hebrew-amharic-temp-room/", config: {
+            { id: "hebrew-amharic-71f5d", shortName: "אמהרית", name: "עברית ⇄ אמהרית", flag: "🇪🇹", url: "https://geigner.github.io/hebrew-amharic-temp-room/", config: {
                 apiKey: "AIzaSyBLjqBXkP8KVHPQzYXczeRvw09qT01-ySE",
                 authDomain: "hebrew-amharic-71f5d.firebaseapp.com",
                 projectId: "hebrew-amharic-71f5d",
@@ -353,7 +347,7 @@
                 messagingSenderId: "701170625071",
                 appId: "1:701170625071:web:8f3e6c9584cb7a823ff4da"
             }},
-            { id: "hebrew-arabic", name: "עברית ⇄ ערבית", flag: "🇸🇦", url: "https://geigner.github.io/hebrew-arabic/", config: {
+            { id: "hebrew-arabic", shortName: "ערבית", name: "עברית ⇄ ערבית", flag: "🇸🇦", url: "https://geigner.github.io/hebrew-arabic/", config: {
                 apiKey: "AIzaSyBZ1ApM988biqiN5c_GfpBcG8mroEDH2cc",
                 authDomain: "hebrew-arabic.firebaseapp.com",
                 projectId: "hebrew-arabic",
@@ -361,7 +355,7 @@
                 messagingSenderId: "877240251900",
                 appId: "1:877240251900:web:c71112877d762c5a31ae79"
             }},
-            { id: "hebrew-italian", name: "עברית ⇄ איטלקית", flag: "🇮🇹", url: "https://geigner.github.io/hebrew-italian/", config: {
+            { id: "hebrew-italian", shortName: "איטלקית", name: "עברית ⇄ איטלקית", flag: "🇮🇹", url: "https://geigner.github.io/hebrew-italian/", config: {
                 apiKey: "AIzaSyBuuzUfonWNNT_Zh2y_okFkpTX-81Qrb98",
                 authDomain: "hebrew-italian.firebaseapp.com",
                 projectId: "hebrew-italian",
@@ -369,7 +363,7 @@
                 messagingSenderId: "426046162499",
                 appId: "1:426046162499:web:018db50fe416fcb73736f6"
             }},
-            { id: "hebrew-russian", name: "עברית ⇄ רוסית", flag: "🇷🇺", url: "https://geigner.github.io/hebrew-russian/", config: {
+            { id: "hebrew-russian", shortName: "רוסית", name: "עברית ⇄ רוסית", flag: "🇷🇺", url: "https://geigner.github.io/hebrew-russian/", config: {
                 apiKey: "AIzaSyBvcY2Rm-kkbVtPUUsclpN_I-z0V7-AnEY",
                 authDomain: "hebrew-russian.firebaseapp.com",
                 projectId: "hebrew-russian",
@@ -377,7 +371,7 @@
                 messagingSenderId: "540341284755",
                 appId: "1:540341284755:web:4c9847f131c494a775c266"
             }},
-            { id: "hebrew-french", name: "עברית ⇄ צרפתית", flag: "🇫🇷", url: "https://geigner.github.io/hebrew-french/", config: {
+            { id: "hebrew-french", shortName: "צרפתית", name: "עברית ⇄ צרפתית", flag: "🇫🇷", url: "https://geigner.github.io/hebrew-french/", config: {
                 apiKey: "AIzaSyBq_hHRhuFu6QfvxdkrN_S0rK17hZskIfo",
                 authDomain: "hebrew-french.firebaseapp.com",
                 projectId: "hebrew-french",
@@ -385,7 +379,7 @@
                 messagingSenderId: "1027136444686",
                 appId: "1:1027136444686:web:e02cc664abd4c1fc8adf5f"
             }},
-            { id: "hebrew-english", name: "עברית ⇄ אנגלית", flag: "🇬🇧", url: "https://geigner.github.io/hebrew-english/", config: {
+            { id: "hebrew-english", shortName: "אנגלית", name: "עברית ⇄ אנגלית", flag: "🇬🇧", url: "https://geigner.github.io/hebrew-english/", config: {
                 apiKey: "AIzaSyCwiBVCup-VIjX4VYEE5ay2HlHoDAaIFyA",
                 authDomain: "hebrew-english.firebaseapp.com",
                 projectId: "hebrew-english",
@@ -400,7 +394,6 @@
 
         window.fetchAllRooms = async function() {
             const tableBody = document.getElementById("live-rooms-body");
-            const counterBadge = document.getElementById("rooms-counter");
             tableBody.innerHTML = `<tr><td colspan="3" class="no-rooms">סורק נתונים מחדש מכל הפרויקטים...</td></tr>`;
             
             globalRoomsCache = [];
@@ -415,6 +408,7 @@
                         querySnapshot.forEach((doc) => {
                             globalRoomsCache.push({
                                 projectId: item.id,
+                                shortName: item.shortName,
                                 name: item.name,
                                 flag: item.flag,
                                 url: item.url,
@@ -427,7 +421,32 @@
                 }
             }
 
+            // עדכון הפילטרים הדינמיים
+            updateFilterBar();
+            
+            // הצגת הנתונים לפי הפילטר הנוכחי
             renderRooms();
+        }
+
+        function updateFilterBar() {
+            const filterBar = document.getElementById("filter-bar");
+            
+            // זיהוי ייחודי של השפות שיש בהן חדרים פעילים כרגע
+            const activeProjects = [...new Map(globalRoomsCache.map(item => [item.projectId, item])).values()];
+
+            let barHTML = `<button class="filter-chip ${currentFilter === 'all' ? 'active' : ''}" onclick="filterRooms('all', this)">הכל</button>`;
+
+            activeProjects.forEach(proj => {
+                const isActive = currentFilter === proj.projectId ? 'active' : '';
+                barHTML += `<button class="filter-chip ${isActive}" onclick="filterRooms('${proj.projectId}', this)">${proj.shortName}</button>`;
+            });
+
+            filterBar.innerHTML = barHTML;
+
+            // אם הפילטר שהיה שנבחר קודם כבר לא קיים ברשימה, נאפס ל-'all'
+            if (currentFilter !== 'all' && !activeProjects.some(p => p.projectId === currentFilter)) {
+                currentFilter = 'all';
+            }
         }
 
         window.renderRooms = function() {
@@ -441,7 +460,7 @@
             counterBadge.textContent = `${globalRoomsCache.length} פעילים`;
 
             if (filteredRooms.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="3" class="no-rooms">אין כרגע חדרים פעילים תחת הסינון הנבחר.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="3" class="no-rooms">אין כרגע חדרים פעילים.</td></tr>`;
                 return;
             }
 
@@ -461,7 +480,6 @@
         window.filterRooms = function(projectId, btnElement) {
             currentFilter = projectId;
             
-            // עדכון עיצוב כפתורי הפילטרים
             document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
 
