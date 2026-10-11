@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>פורטל גשר שפות פדגוגי</title>
+    <title>פורטל גשר שפות פדגוגי - לוח בקרה מרכזי</title>
     <style>
         :root {
             --primary-color: #0f172a;
@@ -12,6 +12,7 @@
             --card-bg: #ffffff;
             --text-color: #1e293b;
             --text-muted: #57606a;
+            --success-color: #16a34a;
         }
         body {
             font-family: system-ui, -apple-system, sans-serif;
@@ -28,7 +29,7 @@
         }
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
             display: flex;
             flex-direction: column;
             gap: 24px;
@@ -50,15 +51,57 @@
             font-size: 1rem;
             margin: 0;
         }
+        
+        /* סקשן לוח הבקרה החי */
+        .live-monitor-section {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .live-monitor-section h2 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .rooms-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+        .rooms-table th, .rooms-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .rooms-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .rooms-table tr:hover {
+            background-color: #f8fafc;
+        }
+        .no-rooms {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 20px;
+            font-style: italic;
+        }
+
         .languages-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 16px;
         }
         .lang-card {
             background: var(--card-bg);
             border-radius: 14px;
-            padding: 22px;
+            padding: 20px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
             border: 1px solid #e2e8f0;
             display: flex;
@@ -73,7 +116,6 @@
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
             border-color: var(--accent-color);
         }
-        /* Focus state for keyboard accessibility */
         .lang-card:focus-visible {
             outline: 3px solid var(--accent-color);
             outline-offset: 3px;
@@ -94,9 +136,9 @@
             flex-direction: column;
             gap: 4px;
         }
-        .lang-title-area h2 {
+        .lang-title-area h3 {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--primary-color);
         }
         .lang-title-area span {
@@ -121,62 +163,78 @@
     <main class="container">
         <header class="hub-header">
             <h1>🌐 פורטל גשר שפות פדגוגי</h1>
-            <p>מרכז ניהול וגישה לחדרי השיחה הרב-לשוניים</p>
+            <p>מרכז ניהול, מעקב וגישה לחדרי השיחה הרב-לשוניים</p>
         </header>
 
+        <!-- סקשן מעקב חדרים בזמן אמת (קריאה בלבד) -->
+        <section class="live-monitor-section">
+            <h2>📊 מעקב חדרים פעילים (בזמן אמת)</h2>
+            <div style="overflow-x: auto;">
+                <table class="rooms-table">
+                    <thead>
+                        <tr>
+                            <th>שפה</th>
+                            <th>מזהה חדר</th>
+                            <th>סטטוס / פעולה</th>
+                        </tr>
+                    </thead>
+                    <tbody id="live-rooms-body">
+                        <tr>
+                            <td colspan="3" class="no-rooms">טוען נתונים מכל הפרויקטים...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- רשת כרטיסיות הקישורים לפרויקטים -->
         <div class="languages-grid">
             
-            <!-- צרפתית -->
-            <a href="https://geigner.github.io/hebrew-french/" target="_blank" class="lang-card" aria-label="מעבר לצ'אט עברית וצרפתית">
+            <a href="https://geigner.github.io/hebrew-french/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇫🇷</div>
                 <div class="lang-title-area">
-                    <h2>עברית ⇄ צרפתית</h2>
-                    <span>כניסה למרחב התרגום והשיחה</span>
+                    <h3>עברית ⇄ צרפתית</h3>
+                    <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
 
-            <!-- אמהרית -->
-            <a href="https://geigner.github.io/hebrew-amharic-temp-room/" target="_blank" class="lang-card" aria-label="מעבר לצ'אט עברית ואמהרית">
+            <a href="https://geigner.github.io/hebrew-amharic-temp-room/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇪🇹</div>
                 <div class="lang-title-area">
-                    <h2>עברית ⇄ אמהרית</h2>
-                    <span>כניסה למרחב התרגום והשיחה</span>
+                    <h3>עברית ⇄ אמהרית</h3>
+                    <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
 
-            <!-- רוסית -->
-            <a href="https://geigner.github.io/hebrew-russian/" target="_blank" class="lang-card" aria-label="מעבר לצ'אט עברית ורוסית">
+            <a href="https://geigner.github.io/hebrew-russian/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇷🇺</div>
                 <div class="lang-title-area">
-                    <h2>עברית ⇄ רוסית</h2>
-                    <span>כניסה למרחב התרגום והשיחה</span>
+                    <h3>עברית ⇄ רוסית</h3>
+                    <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
 
-            <!-- אנגלית -->
-            <a href="https://geigner.github.io/hebrew-english/" target="_blank" class="lang-card" aria-label="מעבר לצ'אט עברית ואנגלית">
+            <a href="https://geigner.github.io/hebrew-english/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇬🇧</div>
                 <div class="lang-title-area">
-                    <h2>עברית ⇄ אנגלית</h2>
-                    <span>כניסה למרחב התרגום והשיחה</span>
+                    <h3>עברית ⇄ אנגלית</h3>
+                    <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
 
-            <!-- ערבית -->
-            <a href="https://geigner.github.io/hebrew-arabic/" target="_blank" class="lang-card" aria-label="מעבר לצ'אט עברית וערבית">
+            <a href="https://geigner.github.io/hebrew-arabic/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇸🇦</div>
                 <div class="lang-title-area">
-                    <h2>עברית ⇄ ערבית</h2>
-                    <span>כניסה למרחב התרגום והשיחה</span>
+                    <h3>עברית ⇄ ערבית</h3>
+                    <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
 
-            <!-- איטלקית -->
-            <a href="https://geigner.github.io/hebrew-italian/" target="_blank" class="lang-card" aria-label="מעבר לצ'אט עברית ואיטלקית">
+            <a href="https://geigner.github.io/hebrew-italian/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇮🇹</div>
                 <div class="lang-title-area">
-                    <h2>עברית ⇄ איטלקית</h2>
-                    <span>כניסה למרחב התרגום והשיחה</span>
+                    <h3>עברית ⇄ איטלקית</h3>
+                    <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
 
@@ -188,5 +246,103 @@
         </footer>
     </main>
 
+    <!-- סקריפט התחברות ואיסוף נתונים מ-6 פרויקטי ה-Firebase במצב קריאה בלבד -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // הגדרות הקונפיגורציה של 6 הפרויקטים
+        const configs = [
+            { name: "עברית ⇄ אמהרית", flag: "🇪🇹", url: "https://geigner.github.io/hebrew-amharic-temp-room/", config: {
+                apiKey: "AIzaSyBLjqBXkP8KVHPQzYXczeRvw09qT01-ySE",
+                authDomain: "hebrew-amharic-71f5d.firebaseapp.com",
+                projectId: "hebrew-amharic-71f5d",
+                storageBucket: "hebrew-amharic-71f5d.firebasestorage.app",
+                messagingSenderId: "701170625071",
+                appId: "1:701170625071:web:8f3e6c9584cb7a823ff4da"
+            }},
+            { name: "עברית ⇄ ערבית", flag: "🇸🇦", url: "https://geigner.github.io/hebrew-arabic/", config: {
+                apiKey: "AIzaSyBZ1ApM988biqiN5c_GfpBcG8mroEDH2cc",
+                authDomain: "hebrew-arabic.firebaseapp.com",
+                projectId: "hebrew-arabic",
+                storageBucket: "hebrew-arabic.firebasestorage.app",
+                messagingSenderId: "877240251900",
+                appId: "1:877240251900:web:c71112877d762c5a31ae79"
+            }},
+            { name: "עברית ⇄ איטלקית", flag: "🇮🇹", url: "https://geigner.github.io/hebrew-italian/", config: {
+                apiKey: "AIzaSyBuuzUfonWNNT_Zh2y_okFkpTX-81Qrb98",
+                authDomain: "hebrew-italian.firebaseapp.com",
+                projectId: "hebrew-italian",
+                storageBucket: "hebrew-italian.firebasestorage.app",
+                messagingSenderId: "426046162499",
+                appId: "1:426046162499:web:018db50fe416fcb73736f6"
+            }},
+            { name: "עברית ⇄ רוסית", flag: "🇷🇺", url: "https://geigner.github.io/hebrew-russian/", config: {
+                apiKey: "AIzaSyBvcY2Rm-kkbVtPUUsclpN_I-z0V7-AnEY",
+                authDomain: "hebrew-russian.firebaseapp.com",
+                projectId: "hebrew-russian",
+                storageBucket: "hebrew-russian.firebasestorage.app",
+                messagingSenderId: "540341284755",
+                appId: "1:540341284755:web:4c9847f131c494a775c266"
+            }},
+            { name: "עברית ⇄ צרפתית", flag: "🇫🇷", url: "https://geigner.github.io/hebrew-french/", config: {
+                apiKey: "AIzaSyBq_hHRhuFu6QfvxdkrN_S0rK17hZskIfo",
+                authDomain: "hebrew-french.firebaseapp.com",
+                projectId: "hebrew-french",
+                storageBucket: "hebrew-french.firebasestorage.app",
+                messagingSenderId: "1027136444686",
+                appId: "1:1027136444686:web:e02cc664abd4c1fc8adf5f"
+            }},
+            { name: "עברית ⇄ אנגלית", flag: "🇬🇧", url: "https://geigner.github.io/hebrew-english/", config: {
+                apiKey: "AIzaSyCwiBVCup-VIjX4VYEE5ay2HlHoDAaIFyA",
+                authDomain: "hebrew-english.firebaseapp.com",
+                projectId: "hebrew-english",
+                storageBucket: "hebrew-english.firebasestorage.app",
+                messagingSenderId: "132280229208",
+                appId: "1:132280229208:web:aa671fef2c69aeffd6d92d"
+            }}
+        ];
+
+        async function fetchAllRooms() {
+            const tableBody = document.getElementById("live-rooms-body");
+            let allRoomsHTML = "";
+            let totalRoomsFound = 0;
+
+            for (let item of configs) {
+                try {
+                    // אתחול מבודד של כל פרויקט בנפרד למניעת התנגשויות
+                    const secondaryApp = initializeApp(item.config, item.config.projectId);
+                    const secondaryDb = getFirestore(secondaryApp);
+                    
+                    // שליפת המסמכים מקולקציית החדרים (נניח שהקולקציה נקראת rooms, ניתן להתאים במידת הצורך)
+                    const querySnapshot = await getDocs(collection(secondaryDb, "rooms"));
+                    
+                    if (!querySnapshot.empty) {
+                        querySnapshot.forEach((doc) => {
+                            totalRoomsFound++;
+                            allRoomsHTML += `
+                                <tr>
+                                    <td>${item.flag} ${item.name}</td>
+                                    <td><code>${doc.id}</code></td>
+                                    <td><a href="${item.url}" target="_blank" style="color: var(--accent-color); text-decoration: none; font-weight: 500;">פתח מרחב 👁️</a></td>
+                                </tr>
+                            `;
+                        });
+                    }
+                } catch (error) {
+                    console.error(`שגיאה בטעינת נתונים עבור ${item.name}:`, error);
+                }
+            }
+
+            if (totalRoomsFound === 0) {
+                tableBody.innerHTML = `<tr><td colspan="3" class="no-rooms">אין כרגע חדרים פעילים באף אחד מהפרויקטים.</td></tr>`;
+            } else {
+                tableBody.innerHTML = allRoomsHTML;
+            }
+        }
+
+        // הפעלת הסריקה בטעינת העמוד
+        fetchAllRooms();
+    </script>
 </body>
 </html>
