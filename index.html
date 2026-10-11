@@ -248,7 +248,7 @@
 
     <!-- סקריפט התחברות ואיסוף נתונים מ-6 פרויקטי ה-Firebase במצב קריאה בלבד -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // הגדרות הקונפיגורציה של 6 הפרויקטים
@@ -311,10 +311,10 @@
             for (let item of configs) {
                 try {
                     // אתחול מבודד של כל פרויקט בנפרד למניעת התנגשויות
-                    const secondaryApp = initializeApp(item.config, item.config.projectId);
+                    const secondaryApp = initializeApp(item.config, "app-" + item.config.projectId);
                     const secondaryDb = getFirestore(secondaryApp);
                     
-                    // שליפת המסמכים מקולקציית החדרים (נניח שהקולקציה נקראת rooms, ניתן להתאים במידת הצורך)
+                    // שליפת המסמכים מקולקציית החדרים
                     const querySnapshot = await getDocs(collection(secondaryDb, "rooms"));
                     
                     if (!querySnapshot.empty) {
