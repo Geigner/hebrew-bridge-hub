@@ -71,15 +71,75 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
             border: 1px solid #e2e8f0;
         }
-        .live-monitor-section h2 {
+        .monitor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .monitor-header h2 {
             font-size: 1.2rem;
             color: var(--primary-color);
-            margin-top: 0;
-            margin-bottom: 15px;
+            margin: 0;
             display: flex;
             align-items: center;
             gap: 8px;
         }
+        .monitor-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .icon-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s;
+        }
+        .icon-btn:hover {
+            background: #e2e8f0;
+        }
+
+        /* פילטרים מהירים */
+        .filter-bar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .filter-chip {
+            background: #f1f5f9;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .filter-chip.active, .filter-chip:hover {
+            background: var(--accent-color);
+            color: #ffffff;
+        }
+
         .rooms-table {
             width: 100%;
             border-collapse: collapse;
@@ -179,7 +239,29 @@
 
         <!-- סקשן מעקב חדרים בזמן אמת (קריאה בלבד) -->
         <section class="live-monitor-section">
-            <h2>📊 מעקב חדרים פעילים (בזמן אמת)</h2>
+            <div class="monitor-header">
+                <h2>
+                    📊 מעקב חדרים פעילים 
+                    <span id="rooms-counter" class="badge">0 פעילים</span>
+                </h2>
+                <div class="monitor-actions">
+                    <button class="icon-btn" onclick="fetchAllRooms()" title="רענן נתונים">
+                        🔄 רענן
+                    </button>
+                </div>
+            </div>
+
+            <!-- סרגל סינון מהיר לפי שפות -->
+            <div class="filter-bar" id="filter-bar">
+                <button class="filter-chip active" onclick="filterRooms('all', this)">הכל</button>
+                <button class="filter-chip" onclick="filterRooms('hebrew-amharic-71f5d', this)">אמהרית</button>
+                <button class="filter-chip" onclick="filterRooms('hebrew-arabic', this)">ערבית</button>
+                <button class="filter-chip" onclick="filterRooms('hebrew-italian', this)">איטלקית</button>
+                <button class="filter-chip" onclick="filterRooms('hebrew-russian', this)">רוסית</button>
+                <button class="filter-chip" onclick="filterRooms('hebrew-french', this)">צרפתית</button>
+                <button class="filter-chip" onclick="filterRooms('hebrew-english', this)">אנגלית</button>
+            </div>
+
             <div style="overflow-x: auto;">
                 <table class="rooms-table">
                     <thead>
@@ -257,13 +339,13 @@
         </footer>
     </main>
 
-    <!-- סקריפט התחברות ואיסוף נתונים (נטען באסינכרוני לאחר שהעמוד כבר עלה כדי לשפר ביצועים) -->
+    <!-- סקריפט התחברות ואיסוף נתונים -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const configs = [
-            { name: "עברית ⇄ אמהרית", flag: "🇪🇹", url: "https://geigner.github.io/hebrew-amharic-temp-room/", config: {
+            { id: "hebrew-amharic-71f5d", name: "עברית ⇄ אמהרית", flag: "🇪🇹", url: "https://geigner.github.io/hebrew-amharic-temp-room/", config: {
                 apiKey: "AIzaSyBLjqBXkP8KVHPQzYXczeRvw09qT01-ySE",
                 authDomain: "hebrew-amharic-71f5d.firebaseapp.com",
                 projectId: "hebrew-amharic-71f5d",
@@ -271,7 +353,7 @@
                 messagingSenderId: "701170625071",
                 appId: "1:701170625071:web:8f3e6c9584cb7a823ff4da"
             }},
-            { name: "עברית ⇄ ערבית", flag: "🇸🇦", url: "https://geigner.github.io/hebrew-arabic/", config: {
+            { id: "hebrew-arabic", name: "עברית ⇄ ערבית", flag: "🇸🇦", url: "https://geigner.github.io/hebrew-arabic/", config: {
                 apiKey: "AIzaSyBZ1ApM988biqiN5c_GfpBcG8mroEDH2cc",
                 authDomain: "hebrew-arabic.firebaseapp.com",
                 projectId: "hebrew-arabic",
@@ -279,7 +361,7 @@
                 messagingSenderId: "877240251900",
                 appId: "1:877240251900:web:c71112877d762c5a31ae79"
             }},
-            { name: "עברית ⇄ איטלקית", flag: "🇮🇹", url: "https://geigner.github.io/hebrew-italian/", config: {
+            { id: "hebrew-italian", name: "עברית ⇄ איטלקית", flag: "🇮🇹", url: "https://geigner.github.io/hebrew-italian/", config: {
                 apiKey: "AIzaSyBuuzUfonWNNT_Zh2y_okFkpTX-81Qrb98",
                 authDomain: "hebrew-italian.firebaseapp.com",
                 projectId: "hebrew-italian",
@@ -287,7 +369,7 @@
                 messagingSenderId: "426046162499",
                 appId: "1:426046162499:web:018db50fe416fcb73736f6"
             }},
-            { name: "עברית ⇄ רוסית", flag: "🇷🇺", url: "https://geigner.github.io/hebrew-russian/", config: {
+            { id: "hebrew-russian", name: "עברית ⇄ רוסית", flag: "🇷🇺", url: "https://geigner.github.io/hebrew-russian/", config: {
                 apiKey: "AIzaSyBvcY2Rm-kkbVtPUUsclpN_I-z0V7-AnEY",
                 authDomain: "hebrew-russian.firebaseapp.com",
                 projectId: "hebrew-russian",
@@ -295,7 +377,7 @@
                 messagingSenderId: "540341284755",
                 appId: "1:540341284755:web:4c9847f131c494a775c266"
             }},
-            { name: "עברית ⇄ צרפתית", flag: "🇫🇷", url: "https://geigner.github.io/hebrew-french/", config: {
+            { id: "hebrew-french", name: "עברית ⇄ צרפתית", flag: "🇫🇷", url: "https://geigner.github.io/hebrew-french/", config: {
                 apiKey: "AIzaSyBq_hHRhuFu6QfvxdkrN_S0rK17hZskIfo",
                 authDomain: "hebrew-french.firebaseapp.com",
                 projectId: "hebrew-french",
@@ -303,7 +385,7 @@
                 messagingSenderId: "1027136444686",
                 appId: "1:1027136444686:web:e02cc664abd4c1fc8adf5f"
             }},
-            { name: "עברית ⇄ אנגלית", flag: "🇬🇧", url: "https://geigner.github.io/hebrew-english/", config: {
+            { id: "hebrew-english", name: "עברית ⇄ אנגלית", flag: "🇬🇧", url: "https://geigner.github.io/hebrew-english/", config: {
                 apiKey: "AIzaSyCwiBVCup-VIjX4VYEE5ay2HlHoDAaIFyA",
                 authDomain: "hebrew-english.firebaseapp.com",
                 projectId: "hebrew-english",
@@ -313,10 +395,15 @@
             }}
         ];
 
-        async function fetchAllRooms() {
+        let globalRoomsCache = [];
+        let currentFilter = 'all';
+
+        window.fetchAllRooms = async function() {
             const tableBody = document.getElementById("live-rooms-body");
-            let allRoomsHTML = "";
-            let totalRoomsFound = 0;
+            const counterBadge = document.getElementById("rooms-counter");
+            tableBody.innerHTML = `<tr><td colspan="3" class="no-rooms">סורק נתונים מחדש מכל הפרויקטים...</td></tr>`;
+            
+            globalRoomsCache = [];
 
             for (let item of configs) {
                 try {
@@ -326,14 +413,13 @@
                     
                     if (!querySnapshot.empty) {
                         querySnapshot.forEach((doc) => {
-                            totalRoomsFound++;
-                            allRoomsHTML += `
-                                <tr>
-                                    <td>${item.flag} ${item.name}</td>
-                                    <td><code>${doc.id}</code></td>
-                                    <td><a href="${item.url}" target="_blank" style="color: var(--accent-color); text-decoration: none; font-weight: 500;">פתח מרחב 👁️</a></td>
-                                </tr>
-                            `;
+                            globalRoomsCache.push({
+                                projectId: item.id,
+                                name: item.name,
+                                flag: item.flag,
+                                url: item.url,
+                                roomId: doc.id
+                            });
                         });
                     }
                 } catch (error) {
@@ -341,14 +427,48 @@
                 }
             }
 
-            if (totalRoomsFound === 0) {
-                tableBody.innerHTML = `<tr><td colspan="3" class="no-rooms">אין כרגע חדרים פעילים באף אחד מהפרויקטים.</td></tr>`;
-            } else {
-                tableBody.innerHTML = allRoomsHTML;
-            }
+            renderRooms();
         }
 
-        // מריץ את הטעינה מיד כשהדפדפן מתפנה, כדי לא לפגוע בציון הביצועים
+        window.renderRooms = function() {
+            const tableBody = document.getElementById("live-rooms-body");
+            const counterBadge = document.getElementById("rooms-counter");
+            
+            const filteredRooms = currentFilter === 'all' 
+                ? globalRoomsCache 
+                : globalRoomsCache.filter(r => r.projectId === currentFilter);
+
+            counterBadge.textContent = `${globalRoomsCache.length} פעילים`;
+
+            if (filteredRooms.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="3" class="no-rooms">אין כרגע חדרים פעילים תחת הסינון הנבחר.</td></tr>`;
+                return;
+            }
+
+            let html = "";
+            filteredRooms.forEach(room => {
+                html += `
+                    <tr>
+                        <td>${room.flag} ${room.name}</td>
+                        <td><code>${room.roomId}</code></td>
+                        <td><a href="${room.url}" target="_blank" style="color: var(--accent-color); text-decoration: none; font-weight: 500;">פתח מרחב 👁️</a></td>
+                    </tr>
+                `;
+            });
+            tableBody.innerHTML = html;
+        }
+
+        window.filterRooms = function(projectId, btnElement) {
+            currentFilter = projectId;
+            
+            // עדכון עיצוב כפתורי הפילטרים
+            document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            renderRooms();
+        }
+
+        // טעינה ראשונית
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(fetchAllRooms, 100);
         });
