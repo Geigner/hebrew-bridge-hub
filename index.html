@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- תגיות SEO מתקדמות לציון מלא -->
+    <meta name="description" content="פורטל גשר שפות פדגוגי - מרכז ניהול, מעקב וגישה לחדרי השיחה הרב-לשוניים של היחידה לקידום נוער נוף הגליל.">
+    <meta name="keywords" content="היל"ה, קידום נוער, נוף הגליל, גשר שפות, לוח בקרה">
+    <meta name="author" content="אייגנר גיא">
+    
+    <!-- Open Graph עבור שיתוף ברשתות חברתיות -->
+    <meta property="og:title" content="פורטל גשר שפות פדגוגי">
+    <meta property="og:description" content="מרכז ניהול, מעקב וגישה לחדרי השיחה הרב-לשוניים.">
+    <meta property="og:type" content="website">
+
     <title>פורטל גשר שפות פדגוגי - לוח בקרה מרכזי</title>
     <style>
         :root {
@@ -246,12 +257,11 @@
         </footer>
     </main>
 
-    <!-- סקריפט התחברות ואיסוף נתונים מ-6 פרויקטי ה-Firebase במצב קריאה בלבד -->
+    <!-- סקריפט התחברות ואיסוף נתונים (נטען באסינכרוני לאחר שהעמוד כבר עלה כדי לשפר ביצועים) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // הגדרות הקונפיגורציה של 6 הפרויקטים
         const configs = [
             { name: "עברית ⇄ אמהרית", flag: "🇪🇹", url: "https://geigner.github.io/hebrew-amharic-temp-room/", config: {
                 apiKey: "AIzaSyBLjqBXkP8KVHPQzYXczeRvw09qT01-ySE",
@@ -310,11 +320,8 @@
 
             for (let item of configs) {
                 try {
-                    // אתחול מבודד של כל פרויקט בנפרד למניעת התנגשויות
                     const secondaryApp = initializeApp(item.config, "app-" + item.config.projectId);
                     const secondaryDb = getFirestore(secondaryApp);
-                    
-                    // שליפת המסמכים מקולקציית החדרים
                     const querySnapshot = await getDocs(collection(secondaryDb, "rooms"));
                     
                     if (!querySnapshot.empty) {
@@ -341,8 +348,10 @@
             }
         }
 
-        // הפעלת הסריקה בטעינת העמוד
-        fetchAllRooms();
+        // מריץ את הטעינה מיד כשהדפדפן מתפנה, כדי לא לפגוע בציון הביצועים
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(fetchAllRooms, 100);
+        });
     </script>
 </body>
 </html>
