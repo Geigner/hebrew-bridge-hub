@@ -50,7 +50,7 @@
         }
         header.hub-header {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         header.hub-header h1 {
             color: var(--primary-color);
@@ -270,6 +270,7 @@
             font-style: italic;
         }
 
+        /* רשת כרטיסיות שפות בתחתית עם נקודת סטטוס */
         .languages-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -287,6 +288,7 @@
             text-decoration: none;
             color: inherit;
             transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            position: relative;
         }
         .lang-card:hover {
             transform: translateY(-3px);
@@ -317,11 +319,26 @@
             margin: 0;
             font-size: 1.1rem;
             color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .lang-title-area span {
             font-size: 0.85rem;
             color: var(--text-muted);
         }
+
+        /* נקודת דופק בתוך הכרטיסייה */
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background-color: #cbd5e1; /* ברירת מחדל בטעינה */
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .status-dot.online { background-color: var(--success-color); box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15); }
+        .status-dot.offline { background-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15); }
 
         /* מודל QR */
         .qr-modal {
@@ -438,13 +455,13 @@
             </div>
         </section>
 
-        <!-- רשת כרטיסיות הקישורים לפרויקטים -->
+        <!-- רשת כרטיסיות הקישורים לפרויקטים (כולל חיווי סטטוס דופק) -->
         <div class="languages-grid">
             
             <a href="https://geigner.github.io/hebrew-french/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇫🇷</div>
                 <div class="lang-title-area">
-                    <h3>עברית ⇄ צרפתית</h3>
+                    <h3>עברית ⇄ צרפתית <span id="dot-hebrew-french" class="status-dot" title="בודק סטטוס..."></span></h3>
                     <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
@@ -452,7 +469,7 @@
             <a href="https://geigner.github.io/hebrew-amharic-temp-room/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇪🇹</div>
                 <div class="lang-title-area">
-                    <h3>עברית ⇄ אמהרית</h3>
+                    <h3>עברית ⇄ אמהרית <span id="dot-hebrew-amharic-71f5d" class="status-dot" title="בודק סטטוס..."></span></h3>
                     <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
@@ -460,7 +477,7 @@
             <a href="https://geigner.github.io/hebrew-russian/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇷🇺</div>
                 <div class="lang-title-area">
-                    <h3>עברית ⇄ רוסית</h3>
+                    <h3>עברית ⇄ רוסית <span id="dot-hebrew-russian" class="status-dot" title="בודק סטטוס..."></span></h3>
                     <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
@@ -468,7 +485,7 @@
             <a href="https://geigner.github.io/hebrew-english/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇬🇧</div>
                 <div class="lang-title-area">
-                    <h3>עברית ⇄ אנגלית</h3>
+                    <h3>עברית ⇄ אנגלית <span id="dot-hebrew-english" class="status-dot" title="בודק סטטוס..."></span></h3>
                     <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
@@ -476,7 +493,7 @@
             <a href="https://geigner.github.io/hebrew-arabic/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇸🇦</div>
                 <div class="lang-title-area">
-                    <h3>עברית ⇄ ערבית</h3>
+                    <h3>עברית ⇄ ערבית <span id="dot-hebrew-arabic" class="status-dot" title="בודק סטטוס..."></span></h3>
                     <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
@@ -484,7 +501,7 @@
             <a href="https://geigner.github.io/hebrew-italian/" target="_blank" class="lang-card">
                 <div class="lang-flag" aria-hidden="true">🇮🇹</div>
                 <div class="lang-title-area">
-                    <h3>עברית ⇄ איטלקית</h3>
+                    <h3>עברית ⇄ איטלקית <span id="dot-hebrew-italian" class="status-dot" title="בודק סטטוס..."></span></h3>
                     <span>כניסה למרחב השיחה</span>
                 </div>
             </a>
@@ -507,7 +524,7 @@
         </div>
     </div>
 
-    <!-- סקריפט ניהול מלא: יצירה, סריקה, איפוס, TTL והתראות חכמות -->
+    <!-- סקריפט ניהול מלא: יצירת חדרים, סריקה, דופק בכרטיסיות, איפוס, TTL והתראות -->
     <script type="module">
         import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, setDoc, deleteDoc, doc, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -681,16 +698,21 @@
         window.fetchAllRooms = async function() {
             const tableBody = document.getElementById("live-rooms-body");
             if (!tableBody) return;
+            
             tableBody.innerHTML = `<tr><td colspan="4" class="no-rooms">סורק נתונים מחדש מכל הפרויקטים...</td></tr>`;
             
             globalRoomsCache = [];
             const now = new Date();
 
             for (let item of configs) {
+                let isHealthy = false;
+                const dotElement = document.getElementById(`dot-${item.id}`);
+
                 try {
                     const secondaryDb = getSafeFirestore(item.config);
                     const querySnapshot = await getDocs(collection(secondaryDb, "rooms"));
-                    
+                    isHealthy = true;
+
                     if (!querySnapshot.empty) {
                         for (let roomDoc of querySnapshot.docs) {
                             const data = roomDoc.data();
@@ -736,7 +758,14 @@
                         }
                     }
                 } catch (error) {
-                    console.error(`שגיאה בטעינת נתונים עבור ${item.name}:`, error);
+                    console.error(`שגיאה בחיבור או בטעינת נתונים עבור ${item.name}:`, error);
+                    isHealthy = false;
+                }
+
+                // עדכון נקודת הדופק בכרטיסייה הספציפית בתחתית
+                if (dotElement) {
+                    dotElement.className = `status-dot ${isHealthy ? 'online' : 'offline'}`;
+                    dotElement.title = isHealthy ? 'החיבור לשרת תקין' : 'תקלת חיבור לשרת';
                 }
             }
 
