@@ -1,342 +1,7 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- תגיות SEO מתקדמות לציון מלא -->
-    <meta name="description" content="פורטל גשר שפות פדגוגי - מרכז ניהול, מעקב וגישה לחדרי השיחה הרב-לשוניים של היחידה לקידום נוער נוף הגליל.">
-    <meta name="keywords" content="היל"ה, קידום נוער, נוף הגליל, גשר שפות, לוח בקרה">
-    <meta name="author" content="אייגנר גיא">
-    
-    <!-- Open Graph עבור שיתוף ברשתות חברתיות -->
-    <meta property="og:title" content="פורטל גשר שפות פדגוגי">
-    <meta property="og:description" content="מרכז ניהול, מעקב וגישה לחדרי השיחה הרב-לשוניים.">
-    <meta property="og:type" content="website">
-
-    <title>פורטל גשר שפות פדגוגי - לוח בקרה מרכזי</title>
-    <style>
-        :root {
-            --primary-color: #0f172a;
-            --accent-color: #2563eb;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-            --text-muted: #57606a;
-            --success-color: #16a34a;
-        }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            min-height: 100dvh;
-            box-sizing: border-box;
-        }
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            padding: 30px 15px;
-            box-sizing: border-box;
-            flex: 1;
-        }
-        header.hub-header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        header.hub-header h1 {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            margin: 0 0 8px 0;
-        }
-        header.hub-header p {
-            color: var(--text-muted);
-            font-size: 1rem;
-            margin: 0;
-        }
-        
-        /* סקשן לוח הבקרה החי */
-        .live-monitor-section {
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-        }
-        .monitor-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .monitor-header h2 {
-            font-size: 1.2rem;
-            color: var(--primary-color);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .monitor-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .badge {
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        .icon-btn {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 6px 10px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: background 0.2s;
-        }
-        .icon-btn:hover {
-            background: #e2e8f0;
-        }
-
-        /* פילטרים דינמיים מהירים */
-        .filter-bar {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        .filter-chip {
-            background: #f1f5f9;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            color: var(--text-muted);
-            transition: all 0.2s;
-        }
-        .filter-chip.active, .filter-chip:hover {
-            background: var(--accent-color);
-            color: #ffffff;
-        }
-
-        .rooms-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: right;
-            font-size: 0.9rem;
-        }
-        .rooms-table th, .rooms-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        .rooms-table th {
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-        .rooms-table tr:hover {
-            background-color: #f8fafc;
-        }
-        .no-rooms {
-            text-align: center;
-            color: var(--text-muted);
-            padding: 20px;
-            font-style: italic;
-        }
-
-        .languages-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 16px;
-        }
-        .lang-card {
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            text-decoration: none;
-            color: inherit;
-            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-        }
-        .lang-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
-            border-color: var(--accent-color);
-        }
-        .lang-card:focus-visible {
-            outline: 3px solid var(--accent-color);
-            outline-offset: 3px;
-        }
-        .lang-flag {
-            font-size: 2.2rem;
-            background: #f1f5f9;
-            width: 55px;
-            height: 55px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            flex-shrink: 0;
-        }
-        .lang-title-area {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .lang-title-area h3 {
-            margin: 0;
-            font-size: 1.1rem;
-            color: var(--primary-color);
-        }
-        .lang-title-area span {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-        .site-footer {
-            text-align: center;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            padding: 15px;
-            background: #ffffff;
-            border-top: 1px solid #e2e8f0;
-            line-height: 1.4;
-            margin-top: auto;
-            border-radius: 12px;
-        }
-    </style>
-</head>
-<body>
-
-    <main class="container">
-        <header class="hub-header">
-            <h1>🌐 פורטל גשר שפות פדגוגי</h1>
-            <p>מרכז ניהול, מעקב וגישה לחדרי השיחה הרב-לשוניים</p>
-        </header>
-
-        <!-- סקשן מעקב חדרים בזמן אמת (קריאה בלבד) -->
-        <section class="live-monitor-section">
-            <div class="monitor-header">
-                <h2>
-                    📊 מעקב חדרים פעילים 
-                    <span id="rooms-counter" class="badge">0 פעילים</span>
-                </h2>
-                <div class="monitor-actions">
-                    <button class="icon-btn" onclick="fetchAllRooms()" title="רענן נתונים">
-                        🔄 רענן
-                    </button>
-                </div>
-            </div>
-
-            <!-- סרגל סינון דינמי -->
-            <div class="filter-bar" id="filter-bar">
-                <button class="filter-chip active" onclick="filterRooms('all', this)">הכל</button>
-            </div>
-
-            <div style="overflow-x: auto;">
-                <table class="rooms-table">
-                    <thead>
-                        <tr>
-                            <th>שפה</th>
-                            <th>מזהה חדר</th>
-                            <th>סטטוס / פעולה</th>
-                        </tr>
-                    </thead>
-                    <tbody id="live-rooms-body">
-                        <tr>
-                            <td colspan="3" class="no-rooms">טוען נתונים מכל הפרויקטים...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- רשת כרטיסיות הקישורים לפרויקטים -->
-        <div class="languages-grid">
-            
-            <a href="https://geigner.github.io/hebrew-french/" target="_blank" class="lang-card">
-                <div class="lang-flag" aria-hidden="true">🇫🇷</div>
-                <div class="lang-title-area">
-                    <h3>עברית ⇄ צרפתית</h3>
-                    <span>כניסה למרחב השיחה</span>
-                </div>
-            </a>
-
-            <a href="https://geigner.github.io/hebrew-amharic-temp-room/" target="_blank" class="lang-card">
-                <div class="lang-flag" aria-hidden="true">🇪🇹</div>
-                <div class="lang-title-area">
-                    <h3>עברית ⇄ אמהרית</h3>
-                    <span>כניסה למרחב השיחה</span>
-                </div>
-            </a>
-
-            <a href="https://geigner.github.io/hebrew-russian/" target="_blank" class="lang-card">
-                <div class="lang-flag" aria-hidden="true">🇷🇺</div>
-                <div class="lang-title-area">
-                    <h3>עברית ⇄ רוסית</h3>
-                    <span>כניסה למרחב השיחה</span>
-                </div>
-            </a>
-
-            <a href="https://geigner.github.io/hebrew-english/" target="_blank" class="lang-card">
-                <div class="lang-flag" aria-hidden="true">🇬🇧</div>
-                <div class="lang-title-area">
-                    <h3>עברית ⇄ אנגלית</h3>
-                    <span>כניסה למרחב השיחה</span>
-                </div>
-            </a>
-
-            <a href="https://geigner.github.io/hebrew-arabic/" target="_blank" class="lang-card">
-                <div class="lang-flag" aria-hidden="true">🇸🇦</div>
-                <div class="lang-title-area">
-                    <h3>עברית ⇄ ערבית</h3>
-                    <span>כניסה למרחב השיחה</span>
-                </div>
-            </a>
-
-            <a href="https://geigner.github.io/hebrew-italian/" target="_blank" class="lang-card">
-                <div class="lang-flag" aria-hidden="true">🇮🇹</div>
-                <div class="lang-title-area">
-                    <h3>עברית ⇄ איטלקית</h3>
-                    <span>כניסה למרחב השיחה</span>
-                </div>
-            </a>
-
-        </div>
-
-        <footer class="site-footer">
-            היחידה לקידום נוער נוף הגליל | תוכנית היל"ה<br>
-            תכנון וניהול פדגוגי: אייגנר גיא
-        </footer>
-    </main>
-
-    <!-- סקריפט התחברות, איסוף נתונים וסינון TTL (24 שעות) -->
+<!-- סקריפט התחברות, איסוף נתונים, הצגת זמן פעילות ומחיקה אוטומטית (TTL של 7 ימים) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, deleteDoc, doc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const configs = [
             { id: "hebrew-amharic-71f5d", shortName: "אמהרית", name: "עברית ⇄ אמהרית", flag: "🇪🇹", url: "https://geigner.github.io/hebrew-amharic-temp-room/", config: {
@@ -391,11 +56,11 @@
 
         let globalRoomsCache = [];
         let currentFilter = 'all';
-        const TTL_HOURS = 24; // מגבלת תנועה לחדר בלוח הבקרה (24 שעות)
+        const TTL_HOURS = 24 * 7; // מחיקה אוטומטית לאחר 7 ימים של חוסר פעילות
 
         window.fetchAllRooms = async function() {
             const tableBody = document.getElementById("live-rooms-body");
-            tableBody.innerHTML = `<tr><td colspan="3" class="no-rooms">סורק נתונים מחדש מכל הפרויקטים...</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="4" class="no-rooms">סורק נתונים מחדש מכל הפרויקטים...</td></tr>`;
             
             globalRoomsCache = [];
             const now = new Date();
@@ -407,31 +72,50 @@
                     const querySnapshot = await getDocs(collection(secondaryDb, "rooms"));
                     
                     if (!querySnapshot.empty) {
-                        querySnapshot.forEach((doc) => {
-                            const data = doc.data();
+                        for (let roomDoc of querySnapshot.docs) {
+                            const data = roomDoc.data();
+                            const roomId = roomDoc.id;
+
+                            // בדיקת ההודעה האחרונה בחדר כדי לדייק את זמן הפעילות
+                            let lastActivityTime = data.createdAt ? (data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt)) : new Date(0);
                             
-                            // בדיקת תוקף לפי שדה זמן יצירה/עדכון במידה וקיים, במידה ולא - מציג כרגיל
-                            let isExpired = false;
-                            const timeField = data.createdAt || data.lastActivity;
-                            if (timeField) {
-                                const createdTime = timeField.toDate ? timeField.toDate() : new Date(timeField);
-                                const hoursDiff = (now - createdTime) / (1000 * 60 * 60);
-                                if (hoursDiff > TTL_HOURS) {
-                                    isExpired = true;
+                            try {
+                                const msgQuery = query(collection(secondaryDb, "rooms", roomId, "messages"), orderBy("timestamp", "desc"), limit(1));
+                                const msgSnap = await getDocs(msgQuery);
+                                if (!msgSnap.empty) {
+                                    const msgData = msgSnap.docs[0].data();
+                                    if (msgData.timestamp) {
+                                        const msgDate = msgData.timestamp.toDate ? msgData.timestamp.toDate() : new Date(msgData.timestamp);
+                                        if (msgDate > lastActivityTime) {
+                                            lastActivityTime = msgDate;
+                                        }
+                                    }
                                 }
+                            } catch (err) {}
+
+                            // חישוב הפרש שעות לצורך בדיקת TTL (7 ימים)
+                            const hoursDiff = (now - lastActivityTime) / (1000 * 60 * 60);
+
+                            if (hoursDiff > TTL_HOURS) {
+                                // מחיקה אוטומטית שקטה של חדר שעבר שבוע
+                                try {
+                                    await deleteDoc(doc(secondaryDb, "rooms", roomId));
+                                    console.log(`החדר הישן ${roomId} ב-${item.shortName} נמחק אוטומטית.`);
+                                } catch (delErr) {}
+                                continue;
                             }
 
-                            if (!isExpired) {
-                                globalRoomsCache.push({
-                                    projectId: item.id,
-                                    shortName: item.shortName,
-                                    name: item.name,
-                                    flag: item.flag,
-                                    url: item.url,
-                                    roomId: doc.id
-                                });
-                            }
-                        });
+                            globalRoomsCache.push({
+                                projectId: item.id,
+                                shortName: item.shortName,
+                                name: item.name,
+                                flag: item.flag,
+                                url: item.url,
+                                roomId: roomId,
+                                lastActivity: lastActivityTime,
+                                dbInstance: secondaryDb
+                            });
+                        }
                     }
                 } catch (error) {
                     console.error(`שגיאה בטעינת נתונים עבור ${item.name}:`, error);
@@ -468,20 +152,36 @@
                 ? globalRoomsCache 
                 : globalRoomsCache.filter(r => r.projectId === currentFilter);
 
+            // מיון לפי הפעילות האחרונה (החדש ביותר למעלה)
+            filteredRooms.sort((a, b) => b.lastActivity - a.lastActivity);
+
             counterBadge.textContent = `${globalRoomsCache.length} פעילים`;
 
             if (filteredRooms.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="3" class="no-rooms">אין כרגע חדרים פעילים.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="4" class="no-rooms">אין כרגע חדרים פעילים.</td></tr>`;
                 return;
             }
 
             let html = "";
             filteredRooms.forEach(room => {
+                const timeString = room.lastActivity.getTime() === 0 ? 'אין פעילות' : room.lastActivity.toLocaleString('he-IL', {
+                    dateStyle: 'short',
+                    timeStyle: 'short'
+                });
+
+                const roomUrlWithParam = `${room.url}?room=${encodeURIComponent(room.roomId)}`;
+
                 html += `
                     <tr>
                         <td>${room.flag} ${room.name}</td>
                         <td><code>${room.roomId}</code></td>
-                        <td><a href="${room.url}" target="_blank" style="color: var(--accent-color); text-decoration: none; font-weight: 500;">פתח מרחב 👁️</a></td>
+                        <td style="font-size: 0.85rem; color: #57606a;">🕒 ${timeString}</td>
+                        <td>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <a href="${roomUrlWithParam}" target="_blank" style="color: var(--accent-color); text-decoration: none; font-weight: 500;">פתח 👁️</a>
+                                <button onclick="manualDeleteRoom('${room.projectId}', '${room.roomId}')" style="background: #fee2e2; color: #dc2626; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">מחק 🗑️</button>
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
@@ -490,11 +190,25 @@
 
         window.filterRooms = function(projectId, btnElement) {
             currentFilter = projectId;
-            
             document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
-
             renderRooms();
+        }
+
+        window.manualDeleteRoom = async function(projectId, roomId) {
+            if (confirm(`למחוק את החדר "${roomId}" לצמיתות?`)) {
+                const projConfig = configs.find(c => c.id === projectId);
+                if (!projConfig) return;
+                try {
+                    const secondaryApp = initializeApp(projConfig.config, "app-del-" + Math.random());
+                    const secondaryDb = getFirestore(secondaryApp);
+                    await deleteDoc(doc(secondaryDb, "rooms", roomId));
+                    alert("החדר נמחק בהצלחה!");
+                    fetchAllRooms();
+                } catch (e) {
+                    alert("שגיאה במחיקת החדר.");
+                }
+            }
         }
 
         // טעינה ראשונית
@@ -502,5 +216,3 @@
             setTimeout(fetchAllRooms, 100);
         });
     </script>
-</body>
-</html>
