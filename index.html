@@ -245,6 +245,24 @@
         .rooms-table tr:hover {
             background-color: #f8fafc;
         }
+        /* עיצוב התראות חכמות לחדרים ישנים */
+        .row-expiring {
+            background-color: #fff7ed !important;
+        }
+        .row-expiring:hover {
+            background-color: #ffedd5 !important;
+        }
+        .expiring-badge {
+            background: #ffedd5;
+            color: #c2410c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
         .no-rooms {
             text-align: center;
             color: var(--text-muted);
@@ -489,7 +507,7 @@
         </div>
     </div>
 
-    <!-- סקריפט ניהול מלא: יצירה, סריקה, איפוס, TTL ומחיקה -->
+    <!-- סקריפט ניהול מלא: יצירה, סריקה, איפוס, TTL והתראות חכמות -->
     <script type="module">
         import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, setDoc, deleteDoc, doc, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -548,6 +566,7 @@
         let globalRoomsCache = [];
         let currentFilter = 'all';
         const TTL_HOURS = 24 * 7; // מחיקה אוטומטית לאחר 7 ימים
+        const WARNING_HOURS = 24 * 5; // התראה החל מ-5 ימי חוסר פעילות
 
         function getSafeFirestore(itemConfig) {
             const appName = "app-" + itemConfig.projectId;
@@ -562,7 +581,6 @@
             return getFirestore(appInstance);
         }
 
-        // פונקציית יצירת חדר חדש מתוך הממשק המרכזי
         window.createRoomFromHub = async function() {
             const selectEl = document.getElementById("target-lang-select");
             const inputEl = document.getElementById("new-room-name-input");
@@ -598,14 +616,13 @@
                 openLinkBtn.href = fullLink;
                 resultBox.classList.remove('hidden');
                 inputEl.value = '';
-                fetchAllRooms(); // רענון הטבלה מיד
+                fetchAllRooms();
             } catch (e) {
                 console.error(e);
                 alert("שגיאה ביצירת החדר בבסיס הנתונים.");
             }
         };
 
-        // פונקציות עזר גלובליות לשיתוף ופעולות מהירות
         window.copyText = function(text) {
             navigator.clipboard.writeText(text).then(() => alert("הקישור הועתק ללוח!"));
         };
@@ -629,7 +646,6 @@
             document.getElementById('qr-modal-container').classList.add('hidden');
         };
 
-        // איפוס חדר (מחיקת ההודעות בתוכו בלבד)
         window.resetRoomMessages = async function(projectId, roomId) {
             if (confirm(`להפסיק ולמחוק את כל ההודעות בתוך החדר "${roomId}"? (החדר עצמו יישאר פעיל)`)) {
                 const projConfig = configs.find(c => c.id === projectId);
@@ -647,7 +663,6 @@
             }
         };
 
-        // מחיקה מלאה של חדר
         window.manualDeleteRoom = async function(projectId, roomId) {
             if (confirm(`למחוק את החדר "${roomId}" לצמיתות מכל בסיס הנתונים?`)) {
                 const projConfig = configs.find(c => c.id === projectId);
@@ -706,6 +721,8 @@
                                 continue;
                             }
 
+                            const isExpiringSoon = hoursDiff >= WARNING_HOURS;
+
                             globalRoomsCache.push({
                                 projectId: item.id,
                                 shortName: item.shortName,
@@ -713,7 +730,8 @@
                                 flag: item.flag,
                                 url: item.url,
                                 roomId: roomId,
-                                lastActivity: lastActivityTime
+                                lastActivity: lastActivityTime,
+                                isExpiringSoon: isExpiringSoon
                             });
                         }
                     }
@@ -771,12 +789,14 @@
                 });
 
                 const roomUrlWithParam = `${room.url}?room=${encodeURIComponent(room.roomId)}`;
+                const rowClass = room.isExpiringSoon ? 'row-expiring' : '';
+                const expiringHtml = room.isExpiringSoon ? '<br><span class="expiring-badge">⚠️ לקראת פקיעה (מעל 5 ימים)</span>' : '';
 
                 html += `
-                    <tr>
+                    <tr class="${rowClass}">
                         <td>${room.flag} ${room.name}</td>
                         <td><code>${room.roomId}</code></td>
-                        <td style="font-size: 0.82rem; color: #57606a;">🕒 ${timeString}</td>
+                        <td style="font-size: 0.82rem; color: #57606a;">🕒 ${timeString} ${expiringHtml}</td>
                         <td>
                             <div class="room-actions-group">
                                 <a href="${roomUrlWithParam}" target="_blank" class="table-action-btn btn-open">הכנס 👁️</a>
