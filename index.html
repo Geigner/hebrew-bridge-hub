@@ -119,35 +119,41 @@
             flex-direction: column;
             gap: 10px;
         }
+
+        /* עיצוב כפתורים קומפקטי ומעודן (אייקונים בלבד) */
         .room-actions-group {
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
+            align-items: center;
         }
-        .room-actions-group button, .room-actions-group a, .table-action-btn {
-            padding: 6px 10px;
-            border-radius: 6px;
+        .table-icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             border: none;
-            font-weight: 600;
-            font-size: 0.78rem;
+            font-size: 1rem;
             cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            color: white;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            transition: opacity 0.2s;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        .room-actions-group button:hover, .room-actions-group a:hover, .table-action-btn:hover {
-            opacity: 0.85;
+        .table-icon-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
         }
-        .btn-open { background-color: #1e40af; }
-        .btn-copy { background-color: #16a34a; }
-        .btn-whatsapp { background-color: #25d366; }
-        .btn-qr { background-color: #2563eb; }
-        .btn-reset { background-color: #d97706; }
-        .btn-delete { background-color: #dc2626; }
+
+        /* צבעים רכים ומעודנים לכפתורים */
+        .btn-open-ic { background-color: #3b82f6; color: white; }      /* כחול מודרני */
+        .btn-copy-ic { background-color: #10b981; color: white; }      /* ירוק מנטה */
+        .btn-wa-ic { background-color: #22c55e; color: white; }        /* ירוק וואטסאפ */
+        .btn-qr-ic { background-color: #6366f1; color: white; }        /* אינדיגו */
+        .btn-reset-ic { background-color: #f59e0b; color: white; }     /* ענבר רך */
+        .btn-delete-ic { background-color: #ef4444; color: white; }    /* אדום רך */
 
         .hidden { display: none !important; }
         
@@ -192,9 +198,9 @@
             background: #f1f5f9;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
-            padding: 6px 10px;
+            padding: 6px 12px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             display: flex;
             align-items: center;
             gap: 5px;
@@ -245,6 +251,7 @@
         .rooms-table tr:hover {
             background-color: #f8fafc;
         }
+
         /* עיצוב התראות חכמות לחדרים ישנים */
         .row-expiring {
             background-color: #fff7ed !important;
@@ -409,10 +416,10 @@
             <div id="hub-result-area" class="room-link-box hidden">
                 <span id="hub-generated-link" style="word-break: break-all; font-family: monospace; font-size: 0.85rem; background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0;"></span>
                 <div class="room-actions-group">
-                    <a id="hub-open-link" href="#" target="_blank" class="table-action-btn btn-open">הכנס 👁️</a>
-                    <button class="table-action-btn btn-copy" onclick="copyText(document.getElementById('hub-generated-link').innerText)">העתק 📋</button>
-                    <button class="table-action-btn btn-whatsapp" onclick="shareWhatsApp(document.getElementById('hub-generated-link').innerText)">וואטסאפ 📱</button>
-                    <button class="table-action-btn btn-qr" onclick="showQRModal(document.getElementById('hub-generated-link').innerText)">QR 📷</button>
+                    <a id="hub-open-link" href="#" target="_blank" class="table-icon-btn btn-open-ic" title="הכנס לחדר">👁️</a>
+                    <button class="table-icon-btn btn-copy-ic" onclick="copyText(document.getElementById('hub-generated-link').innerText)" title="העתק קישור">📋</button>
+                    <button class="table-icon-btn btn-wa-ic" onclick="shareWhatsApp(document.getElementById('hub-generated-link').innerText)" title="שתף בוואטסאפ">📱</button>
+                    <button class="table-icon-btn btn-qr-ic" onclick="showQRModal(document.getElementById('hub-generated-link').innerText)" title="הצג קוד QR">📷</button>
                 </div>
             </div>
         </section>
@@ -443,7 +450,7 @@
                             <th>שפה</th>
                             <th>מזהה חדר</th>
                             <th>פעילות אחרונה</th>
-                            <th>ניהול / גישה מלאה</th>
+                            <th>ניהול / גישה מהירה</th>
                         </tr>
                     </thead>
                     <tbody id="live-rooms-body">
@@ -598,7 +605,6 @@
             return getFirestore(appInstance);
         }
 
-        // פונקציית יצירת חדר עם מנגנון מניעת כפילויות מובנה
         window.createRoomFromHub = async function() {
             const selectEl = document.getElementById("target-lang-select");
             const inputEl = document.getElementById("new-room-name-input");
@@ -630,7 +636,6 @@
                 const roomRef = doc(db, "rooms", roomName);
                 const existingDoc = await getDoc(roomRef);
 
-                // בדיקת כפילות
                 if (existingDoc.exists()) {
                     const confirmOverwrite = confirm(`⚠️ החדר "${roomName}" כבר קיים בשפת ${projConfig.shortName}.\n\nהאם ברצונך לאפס ולדרוס אותו? (ביטול יאפשר לך לבחור שם אחר)`);
                     if (!confirmOverwrite) {
@@ -640,7 +645,6 @@
                     }
                 }
 
-                // יצירת החדר
                 await setDoc(roomRef, {
                     createdAt: serverTimestamp(),
                     roomName: roomName,
@@ -849,12 +853,12 @@
                         <td style="font-size: 0.82rem; color: #57606a;">🕒 ${timeString} ${expiringHtml}</td>
                         <td>
                             <div class="room-actions-group">
-                                <a href="${roomUrlWithParam}" target="_blank" class="table-action-btn btn-open">הכנס 👁️</a>
-                                <button class="table-action-btn btn-copy" onclick="copyText('${roomUrlWithParam}')">העתק 📋</button>
-                                <button class="table-action-btn btn-whatsapp" onclick="shareWhatsApp('${roomUrlWithParam}')">וואטסאפ 📱</button>
-                                <button class="table-action-btn btn-qr" onclick="showQRModal('${roomUrlWithParam}')">QR 📷</button>
-                                <button class="table-action-btn btn-reset" onclick="resetRoomMessages('${room.projectId}', '${room.roomId}')">איפוס 🔄</button>
-                                <button class="table-action-btn btn-delete" onclick="manualDeleteRoom('${room.projectId}', '${room.roomId}')">מחק 🗑️</button>
+                                <a href="${roomUrlWithParam}" target="_blank" class="table-icon-btn btn-open-ic" title="הכנס לחדר">👁️</a>
+                                <button class="table-icon-btn btn-copy-ic" onclick="copyText('${roomUrlWithParam}')" title="העתק קישור">📋</button>
+                                <button class="table-icon-btn btn-wa-ic" onclick="shareWhatsApp('${roomUrlWithParam}')" title="שתף בוואטסאפ">📱</button>
+                                <button class="table-icon-btn btn-qr-ic" onclick="showQRModal('${roomUrlWithParam}')" title="הצג קוד QR">📷</button>
+                                <button class="table-icon-btn btn-reset-ic" onclick="resetRoomMessages('${room.projectId}', '${room.roomId}')" title="איפוס הודעות החדר">🔄</button>
+                                <button class="table-icon-btn btn-delete-ic" onclick="manualDeleteRoom('${room.projectId}', '${room.roomId}')" title="מחיקת חדר לצמיתות">🗑️</button>
                             </div>
                         </td>
                     </tr>
