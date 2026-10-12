@@ -62,6 +62,68 @@
             font-size: 1rem;
             margin: 0;
         }
+
+        /* סקשן יצירת חדר מרכזי */
+        .create-room-section {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .create-room-section h2 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .create-form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .create-form-row select, .create-form-row input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.95rem;
+            font-family: inherit;
+            background: #fff;
+        }
+        .create-form-row button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.95rem;
+        }
+        .create-form-row button:hover {
+            background-color: #1d4ed8;
+        }
+        .room-link-box {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .hidden { display: none !important; }
         
         /* סקשן לוח הבקרה החי */
         .live-monitor-section {
@@ -237,6 +299,32 @@
             <p>מרכז ניהול, מעקב וגישה לחדרי השיחה הרב-לשוניים</p>
         </header>
 
+        <!-- סקשן יצירת חדר חדש ממרכז הניהול -->
+        <section class="create-room-section">
+            <h2>➕ יצירת חדר שיחה חדש</h2>
+            <div class="create-form-row">
+                <select id="target-lang-select">
+                    <option value="" disabled selected>בחר שפת יעד...</option>
+                    <option value="hebrew-french">🇫🇷 עברית ⇄ צרפתית</option>
+                    <option value="hebrew-amharic-71f5d">🇪🇹 עברית ⇄ אמהרית</option>
+                    <option value="hebrew-russian">🇷🇺 עברית ⇄ רוסית</option>
+                    <option value="hebrew-english">🇬🇧 עברית ⇄ אנגלית</option>
+                    <option value="hebrew-arabic">🇸🇦 עברית ⇄ ערבית</option>
+                    <option value="hebrew-italian">🇮🇹 עברית ⇄ איטלקית</option>
+                </select>
+                <input type="text" id="new-room-name-input" placeholder="שם החדר (למשל: קבוצה-1)" onkeydown="if(event.key==='Enter') createRoomFromHub()">
+                <button onclick="createRoomFromHub()">צור קישור 🚀</button>
+            </div>
+            
+            <div id="hub-result-area" class="room-link-box hidden">
+                <span id="hub-generated-link" style="word-break: break-all;"></span>
+                <div style="display: flex; gap: 6px; flex-shrink: 0;">
+                    <button onclick="copyHubLink()" style="background: #16a34a; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">העתק 📋</button>
+                    <button onclick="openHubLink()" style="background: var(--accent-color); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">פתח 👁️</button>
+                </div>
+            </div>
+        </section>
+
         <!-- סקשן מעקב חדרים בזמן אמת -->
         <section class="live-monitor-section">
             <div class="monitor-header">
@@ -334,10 +422,10 @@
         </footer>
     </main>
 
-    <!-- סקריפט התחברות, איסוף נתונים, הצגת זמן פעילות ומחיקה אוטומטית (TTL של 7 ימים) -->
+    <!-- סקריפט ניהול מלא: יצירה, סריקה, TTL ומחיקה -->
     <script type="module">
         import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, deleteDoc, doc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, setDoc, deleteDoc, doc, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const configs = [
             { id: "hebrew-amharic-71f5d", shortName: "אמהרית", name: "עברית ⇄ אמהרית", flag: "🇪🇹", url: "https://geigner.github.io/hebrew-amharic-temp-room/", config: {
@@ -406,6 +494,57 @@
             }
             return getFirestore(appInstance);
         }
+
+        // פונקציית יצירת חדר חדש מתוך הממשק המרכזי
+        window.createRoomFromHub = async function() {
+            const selectEl = document.getElementById("target-lang-select");
+            const inputEl = document.getElementById("new-room-name-input");
+            const resultBox = document.getElementById("hub-result-area");
+            const linkSpan = document.getElementById("hub-generated-link");
+
+            const selectedProjectId = selectEl.value;
+            const roomName = inputEl.value.trim();
+
+            if (!selectedProjectId) {
+                alert("אנא בחר שפת יעד לחדר.");
+                return;
+            }
+            if (!roomName) {
+                alert("אנא הכנס שם לחדר.");
+                return;
+            }
+
+            const projConfig = configs.find(c => c.id === selectedProjectId);
+            if (!projConfig) return;
+
+            try {
+                const db = getSafeFirestore(projConfig.config);
+                await setDoc(doc(db, "rooms", roomName), {
+                    createdAt: serverTimestamp(),
+                    roomName: roomName,
+                    language: selectedProjectId
+                }, { merge: true });
+
+                const fullLink = `${projConfig.url}?room=${encodeURIComponent(roomName)}`;
+                linkSpan.innerText = fullLink;
+                resultBox.classList.remove('hidden');
+                inputEl.value = '';
+                fetchAllRooms(); // רענון הטבלה מיד כדי שהחדר החדש יופיע
+            } catch (e) {
+                console.error(e);
+                alert("שגיאה ביצירת החדר בבסיס הנתונים.");
+            }
+        };
+
+        window.copyHubLink = function() {
+            const linkText = document.getElementById("hub-generated-link").innerText;
+            navigator.clipboard.writeText(linkText).then(() => alert("הקישור הועתק ללוח!"));
+        };
+
+        window.openHubLink = function() {
+            const linkText = document.getElementById("hub-generated-link").innerText;
+            if (linkText) window.open(linkText, '_blank');
+        };
 
         window.fetchAllRooms = async function() {
             const tableBody = document.getElementById("live-rooms-body");
