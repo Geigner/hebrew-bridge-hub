@@ -40,7 +40,7 @@
         }
         .container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1050px;
             display: flex;
             flex-direction: column;
             gap: 24px;
@@ -124,22 +124,30 @@
             gap: 6px;
             flex-wrap: wrap;
         }
-        .room-actions-group button, .room-actions-group a {
-            flex: 1;
-            padding: 8px 12px;
+        .room-actions-group button, .room-actions-group a, .table-action-btn {
+            padding: 6px 10px;
             border-radius: 6px;
             border: none;
-            font-weight: bold;
-            font-size: 0.85rem;
+            font-weight: 600;
+            font-size: 0.78rem;
             cursor: pointer;
             text-align: center;
             text-decoration: none;
             color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: opacity 0.2s;
         }
+        .room-actions-group button:hover, .room-actions-group a:hover, .table-action-btn:hover {
+            opacity: 0.85;
+        }
+        .btn-open { background-color: #1e40af; }
         .btn-copy { background-color: #16a34a; }
         .btn-whatsapp { background-color: #25d366; }
         .btn-qr { background-color: #2563eb; }
-        .btn-open { background-color: #475569; }
+        .btn-reset { background-color: #d97706; }
+        .btn-delete { background-color: #dc2626; }
 
         .hidden { display: none !important; }
         
@@ -224,10 +232,10 @@
             width: 100%;
             border-collapse: collapse;
             text-align: right;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
         }
         .rooms-table th, .rooms-table td {
-            padding: 10px 12px;
+            padding: 10px 10px;
             border-bottom: 1px solid #f1f5f9;
         }
         .rooms-table th {
@@ -366,10 +374,10 @@
             <div id="hub-result-area" class="room-link-box hidden">
                 <span id="hub-generated-link" style="word-break: break-all; font-family: monospace; font-size: 0.85rem; background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0;"></span>
                 <div class="room-actions-group">
-                    <button class="btn-copy" onclick="copyHubLink()">העתק 📋</button>
-                    <button class="btn-whatsapp" onclick="shareHubWhatsApp()">וואטסאפ 📱</button>
-                    <button class="btn-qr" onclick="showHubQRModal()">QR 📷</button>
-                    <a id="hub-open-link" href="#" target="_blank" class="btn-open">פתח 👁️</a>
+                    <a id="hub-open-link" href="#" target="_blank" class="table-action-btn btn-open">הכנס 👁️</a>
+                    <button class="table-action-btn btn-copy" onclick="copyText(document.getElementById('hub-generated-link').innerText)">העתק 📋</button>
+                    <button class="table-action-btn btn-whatsapp" onclick="shareWhatsApp(document.getElementById('hub-generated-link').innerText)">וואטסאפ 📱</button>
+                    <button class="table-action-btn btn-qr" onclick="showQRModal(document.getElementById('hub-generated-link').innerText)">QR 📷</button>
                 </div>
             </div>
         </section>
@@ -400,7 +408,7 @@
                             <th>שפה</th>
                             <th>מזהה חדר</th>
                             <th>פעילות אחרונה</th>
-                            <th>ניהול / גישה</th>
+                            <th>ניהול / גישה מלאה</th>
                         </tr>
                     </thead>
                     <tbody id="live-rooms-body">
@@ -472,16 +480,16 @@
     </main>
 
     <!-- מודל QR -->
-    <div id="qr-modal-container" class="qr-modal hidden" onclick="hideHubQRModal()">
+    <div id="qr-modal-container" class="qr-modal hidden" onclick="hideQRModal()">
         <div class="qr-modal-content" onclick="event.stopPropagation()">
             <h3 style="margin: 0; color: #1e293b; font-size: 1rem;">סרוק להצטרפות 📱</h3>
             <div id="qrcode-wrapper"></div>
             <p id="qr-url-text" style="font-size: 0.7rem; color: #64748b; word-break: break-all; margin: 0;"></p>
-            <button onclick="hideHubQRModal()" style="background-color: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 4px;">סגור</button>
+            <button onclick="hideQRModal()" style="background-color: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 4px;">סגור</button>
         </div>
     </div>
 
-    <!-- סקריפט ניהול מלא: יצירה, סריקה, TTL ומחיקה -->
+    <!-- סקריפט ניהול מלא: יצירה, סריקה, איפוס, TTL ומחיקה -->
     <script type="module">
         import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, setDoc, deleteDoc, doc, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -597,30 +605,62 @@
             }
         };
 
-        window.copyHubLink = function() {
-            const linkText = document.getElementById("hub-generated-link").innerText;
-            navigator.clipboard.writeText(linkText).then(() => alert("הקישור הועתק ללוח!"));
+        // פונקציות עזר גלובליות לשיתוף ופעולות מהירות
+        window.copyText = function(text) {
+            navigator.clipboard.writeText(text).then(() => alert("הקישור הועתק ללוח!"));
         };
 
-        window.shareHubWhatsApp = function() {
-            const linkText = document.getElementById("hub-generated-link").innerText;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('הצטרפו לחדר גשר שפות: ' + linkText)}`, '_blank');
+        window.shareWhatsApp = function(text) {
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('הצטרפו לחדר גשר שפות: ' + text)}`, '_blank');
         };
 
-        window.showHubQRModal = function() {
-            const linkText = document.getElementById("hub-generated-link").innerText;
-            if (!linkText) return;
+        window.showQRModal = function(urlText) {
+            if (!urlText) return;
             const modal = document.getElementById('qr-modal-container');
             const wrapper = document.getElementById('qrcode-wrapper');
             const textEl = document.getElementById('qr-url-text');
-            const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(linkText)}`;
+            const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(urlText)}`;
             wrapper.innerHTML = `<img src="${qrImageUrl}" alt="QR Code">`;
-            textEl.innerText = linkText;
+            textEl.innerText = urlText;
             modal.classList.remove('hidden');
         };
 
-        window.hideHubQRModal = function() {
+        window.hideQRModal = function() {
             document.getElementById('qr-modal-container').classList.add('hidden');
+        };
+
+        // איפוס חדר (מחיקת ההודעות בתוכו בלבד)
+        window.resetRoomMessages = async function(projectId, roomId) {
+            if (confirm(`להפסיק ולמחוק את כל ההודעות בתוך החדר "${roomId}"? (החדר עצמו יישאר פעיל)`)) {
+                const projConfig = configs.find(c => c.id === projectId);
+                if (!projConfig) return;
+                try {
+                    const secondaryDb = getSafeFirestore(projConfig.config);
+                    const msgSnap = await getDocs(collection(secondaryDb, "rooms", roomId, "messages"));
+                    const deletePromises = msgSnap.docs.map(mDoc => deleteDoc(doc(secondaryDb, "rooms", roomId, "messages", mDoc.id)));
+                    await Promise.all(deletePromises);
+                    alert("ההודעות בחדר אופסו בהצלחה!");
+                    fetchAllRooms();
+                } catch (e) {
+                    alert("שגיאה באיפוס הודעות החדר.");
+                }
+            }
+        };
+
+        // מחיקה מלאה של חדר
+        window.manualDeleteRoom = async function(projectId, roomId) {
+            if (confirm(`למחוק את החדר "${roomId}" לצמיתות מכל בסיס הנתונים?`)) {
+                const projConfig = configs.find(c => c.id === projectId);
+                if (!projConfig) return;
+                try {
+                    const secondaryDb = getSafeFirestore(projConfig.config);
+                    await deleteDoc(doc(secondaryDb, "rooms", roomId));
+                    alert("החדר נמחק בהצלחה!");
+                    fetchAllRooms();
+                } catch (e) {
+                    alert("שגיאה במחיקת החדר.");
+                }
+            }
         };
 
         window.fetchAllRooms = async function() {
@@ -736,11 +776,15 @@
                     <tr>
                         <td>${room.flag} ${room.name}</td>
                         <td><code>${room.roomId}</code></td>
-                        <td style="font-size: 0.85rem; color: #57606a;">🕒 ${timeString}</td>
+                        <td style="font-size: 0.82rem; color: #57606a;">🕒 ${timeString}</td>
                         <td>
-                            <div style="display: flex; gap: 8px; align-items: center;">
-                                <a href="${roomUrlWithParam}" target="_blank" style="color: var(--accent-color); text-decoration: none; font-weight: 500;">פתח 👁️</a>
-                                <button onclick="manualDeleteRoom('${room.projectId}', '${room.roomId}')" style="background: #fee2e2; color: #dc2626; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">מחק 🗑️</button>
+                            <div class="room-actions-group">
+                                <a href="${roomUrlWithParam}" target="_blank" class="table-action-btn btn-open">הכנס 👁️</a>
+                                <button class="table-action-btn btn-copy" onclick="copyText('${roomUrlWithParam}')">העתק 📋</button>
+                                <button class="table-action-btn btn-whatsapp" onclick="shareWhatsApp('${roomUrlWithParam}')">וואטסאפ 📱</button>
+                                <button class="table-action-btn btn-qr" onclick="showQRModal('${roomUrlWithParam}')">QR 📷</button>
+                                <button class="table-action-btn btn-reset" onclick="resetRoomMessages('${room.projectId}', '${room.roomId}')">איפוס 🔄</button>
+                                <button class="table-action-btn btn-delete" onclick="manualDeleteRoom('${room.projectId}', '${room.roomId}')">מחק 🗑️</button>
                             </div>
                         </td>
                     </tr>
@@ -754,21 +798,6 @@
             document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
             if (btnElement) btnElement.classList.add('active');
             renderRooms();
-        }
-
-        window.manualDeleteRoom = async function(projectId, roomId) {
-            if (confirm(`למחוק את החדר "${roomId}" לצמיתות?`)) {
-                const projConfig = configs.find(c => c.id === projectId);
-                if (!projConfig) return;
-                try {
-                    const secondaryDb = getSafeFirestore(projConfig.config);
-                    await deleteDoc(doc(secondaryDb, "rooms", roomId));
-                    alert("החדר נמחק בהצלחה!");
-                    fetchAllRooms();
-                } catch (e) {
-                    alert("שגיאה במחיקת החדר.");
-                }
-            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
