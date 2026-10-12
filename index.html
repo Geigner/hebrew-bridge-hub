@@ -115,14 +115,32 @@
             padding: 12px;
             margin-top: 15px;
             border-radius: 8px;
-            word-break: break-all;
-            font-family: monospace;
-            font-size: 0.85rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
             gap: 10px;
         }
+        .room-actions-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .room-actions-group button, .room-actions-group a {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+        }
+        .btn-copy { background-color: #16a34a; }
+        .btn-whatsapp { background-color: #25d366; }
+        .btn-qr { background-color: #2563eb; }
+        .btn-open { background-color: #475569; }
+
         .hidden { display: none !important; }
         
         /* סקשן לוח הבקרה החי */
@@ -278,6 +296,35 @@
             font-size: 0.85rem;
             color: var(--text-muted);
         }
+
+        /* מודל QR */
+        .qr-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .qr-modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            text-align: center;
+            max-width: 300px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .qr-modal-content img {
+            width: 180px;
+            height: 180px;
+            border-radius: 6px;
+        }
+
         .site-footer {
             text-align: center;
             font-size: 0.75rem;
@@ -317,10 +364,12 @@
             </div>
             
             <div id="hub-result-area" class="room-link-box hidden">
-                <span id="hub-generated-link" style="word-break: break-all;"></span>
-                <div style="display: flex; gap: 6px; flex-shrink: 0;">
-                    <button onclick="copyHubLink()" style="background: #16a34a; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">העתק 📋</button>
-                    <button onclick="openHubLink()" style="background: var(--accent-color); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">פתח 👁️</button>
+                <span id="hub-generated-link" style="word-break: break-all; font-family: monospace; font-size: 0.85rem; background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0;"></span>
+                <div class="room-actions-group">
+                    <button class="btn-copy" onclick="copyHubLink()">העתק 📋</button>
+                    <button class="btn-whatsapp" onclick="shareHubWhatsApp()">וואטסאפ 📱</button>
+                    <button class="btn-qr" onclick="showHubQRModal()">QR 📷</button>
+                    <a id="hub-open-link" href="#" target="_blank" class="btn-open">פתח 👁️</a>
                 </div>
             </div>
         </section>
@@ -422,6 +471,16 @@
         </footer>
     </main>
 
+    <!-- מודל QR -->
+    <div id="qr-modal-container" class="qr-modal hidden" onclick="hideHubQRModal()">
+        <div class="qr-modal-content" onclick="event.stopPropagation()">
+            <h3 style="margin: 0; color: #1e293b; font-size: 1rem;">סרוק להצטרפות 📱</h3>
+            <div id="qrcode-wrapper"></div>
+            <p id="qr-url-text" style="font-size: 0.7rem; color: #64748b; word-break: break-all; margin: 0;"></p>
+            <button onclick="hideHubQRModal()" style="background-color: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 4px;">סגור</button>
+        </div>
+    </div>
+
     <!-- סקריפט ניהול מלא: יצירה, סריקה, TTL ומחיקה -->
     <script type="module">
         import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -501,6 +560,7 @@
             const inputEl = document.getElementById("new-room-name-input");
             const resultBox = document.getElementById("hub-result-area");
             const linkSpan = document.getElementById("hub-generated-link");
+            const openLinkBtn = document.getElementById("hub-open-link");
 
             const selectedProjectId = selectEl.value;
             const roomName = inputEl.value.trim();
@@ -527,9 +587,10 @@
 
                 const fullLink = `${projConfig.url}?room=${encodeURIComponent(roomName)}`;
                 linkSpan.innerText = fullLink;
+                openLinkBtn.href = fullLink;
                 resultBox.classList.remove('hidden');
                 inputEl.value = '';
-                fetchAllRooms(); // רענון הטבלה מיד כדי שהחדר החדש יופיע
+                fetchAllRooms(); // רענון הטבלה מיד
             } catch (e) {
                 console.error(e);
                 alert("שגיאה ביצירת החדר בבסיס הנתונים.");
@@ -541,9 +602,25 @@
             navigator.clipboard.writeText(linkText).then(() => alert("הקישור הועתק ללוח!"));
         };
 
-        window.openHubLink = function() {
+        window.shareHubWhatsApp = function() {
             const linkText = document.getElementById("hub-generated-link").innerText;
-            if (linkText) window.open(linkText, '_blank');
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('הצטרפו לחדר גשר שפות: ' + linkText)}`, '_blank');
+        };
+
+        window.showHubQRModal = function() {
+            const linkText = document.getElementById("hub-generated-link").innerText;
+            if (!linkText) return;
+            const modal = document.getElementById('qr-modal-container');
+            const wrapper = document.getElementById('qrcode-wrapper');
+            const textEl = document.getElementById('qr-url-text');
+            const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(linkText)}`;
+            wrapper.innerHTML = `<img src="${qrImageUrl}" alt="QR Code">`;
+            textEl.innerText = linkText;
+            modal.classList.remove('hidden');
+        };
+
+        window.hideHubQRModal = function() {
+            document.getElementById('qr-modal-container').classList.add('hidden');
         };
 
         window.fetchAllRooms = async function() {
