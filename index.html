@@ -333,7 +333,7 @@
             width: 9px;
             height: 9px;
             border-radius: 50%;
-            background-color: #cbd5e1; /* ברירת מחדל בטעינה */
+            background-color: #cbd5e1;
             display: inline-block;
             flex-shrink: 0;
         }
@@ -403,7 +403,7 @@
                     <option value="hebrew-italian">🇮🇹 עברית ⇄ איטלקית</option>
                 </select>
                 <input type="text" id="new-room-name-input" placeholder="שם החדר (למשל: קבוצה-1)" onkeydown="if(event.key==='Enter') createRoomFromHub()">
-                <button onclick="createRoomFromHub()">צור קישור 🚀</button>
+                <button id="btn-create-room" onclick="createRoomFromHub()">צור קישור 🚀</button>
             </div>
             
             <div id="hub-result-area" class="room-link-box hidden">
@@ -524,10 +524,10 @@
         </div>
     </div>
 
-    <!-- סקריפט ניהול מלא: יצירת חדרים, סריקה, דופק בכרטיסיות, איפוס, TTL והתראות -->
+    <!-- סקריפט ניהול מלא: יצירת חדרים, מניעת כפילויות, סריקה, דופק בכרטיסיות, איפוס ו-TTL -->
     <script type="module">
         import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, setDoc, deleteDoc, doc, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, setDoc, deleteDoc, doc, getDoc, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const configs = [
             { id: "hebrew-amharic-71f5d", shortName: "אמהרית", name: "עברית ⇄ אמהרית", flag: "🇪🇹", url: "https://geigner.github.io/hebrew-amharic-temp-room/", config: {
@@ -582,8 +582,8 @@
 
         let globalRoomsCache = [];
         let currentFilter = 'all';
-        const TTL_HOURS = 24 * 7; // מחיקה אוטומטית לאחר 7 ימים
-        const WARNING_HOURS = 24 * 5; // התראה החל מ-5 ימי חוסר פעילות
+        const TTL_HOURS = 24 * 7;
+        const WARNING_HOURS = 24 * 5;
 
         function getSafeFirestore(itemConfig) {
             const appName = "app-" + itemConfig.projectId;
@@ -598,12 +598,14 @@
             return getFirestore(appInstance);
         }
 
+        // פונקציית יצירת חדר עם מנגנון מניעת כפילויות מובנה
         window.createRoomFromHub = async function() {
             const selectEl = document.getElementById("target-lang-select");
             const inputEl = document.getElementById("new-room-name-input");
             const resultBox = document.getElementById("hub-result-area");
             const linkSpan = document.getElementById("hub-generated-link");
             const openLinkBtn = document.getElementById("hub-open-link");
+            const btnCreate = document.getElementById("btn-create-room");
 
             const selectedProjectId = selectEl.value;
             const roomName = inputEl.value.trim();
@@ -620,9 +622,26 @@
             const projConfig = configs.find(c => c.id === selectedProjectId);
             if (!projConfig) return;
 
+            btnCreate.disabled = true;
+            btnCreate.innerText = "בודק תקינות...";
+
             try {
                 const db = getSafeFirestore(projConfig.config);
-                await setDoc(doc(db, "rooms", roomName), {
+                const roomRef = doc(db, "rooms", roomName);
+                const existingDoc = await getDoc(roomRef);
+
+                // בדיקת כפילות
+                if (existingDoc.exists()) {
+                    const confirmOverwrite = confirm(`⚠️ החדר "${roomName}" כבר קיים בשפת ${projConfig.shortName}.\n\nהאם ברצונך לאפס ולדרוס אותו? (ביטול יאפשר לך לבחור שם אחר)`);
+                    if (!confirmOverwrite) {
+                        btnCreate.disabled = false;
+                        btnCreate.innerText = "צור קישור 🚀";
+                        return;
+                    }
+                }
+
+                // יצירת החדר
+                await setDoc(roomRef, {
                     createdAt: serverTimestamp(),
                     roomName: roomName,
                     language: selectedProjectId
@@ -637,6 +656,9 @@
             } catch (e) {
                 console.error(e);
                 alert("שגיאה ביצירת החדר בבסיס הנתונים.");
+            } finally {
+                btnCreate.disabled = false;
+                btnCreate.innerText = "צור קישור 🚀";
             }
         };
 
@@ -762,7 +784,6 @@
                     isHealthy = false;
                 }
 
-                // עדכון נקודת הדופק בכרטיסייה הספציפית בתחתית
                 if (dotElement) {
                     dotElement.className = `status-dot ${isHealthy ? 'online' : 'offline'}`;
                     dotElement.title = isHealthy ? 'החיבור לשרת תקין' : 'תקלת חיבור לשרת';
